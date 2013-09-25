@@ -271,7 +271,7 @@ $(document).ready(function () {
             controller.infinProgram = whichProgram;
             controller.infinPlay = infinStatus;
             var cookies,
-                i;
+                i = 0;
             controller.savedPrograms = [];
             controller.timeIntervals = [];
 
@@ -291,12 +291,10 @@ $(document).ready(function () {
                         "json");
         },
 
-        establishBorderPos : function (newProgram, programArray) {
+        establishBorderPos : function (newProgram) {
 
-            var origPosition = $("#borderHolder").position(),
-                i,
-                newPosition,
-                playingProgram;
+            var i = 0,
+                newPosition;
 
             if ($(newProgram).index() === 0 && controller.playing === null) {
                 $(newProgram).addClass("playing");
@@ -305,206 +303,185 @@ $(document).ready(function () {
                 newPosition = controller.playing * 130;
                 $("#borderHolder").css({top: newPosition});
                 //playingProgram = programArray[i];
-                $(newProgram).addClass("playing");  
+                $(newProgram).addClass("playing");
                 $(".playing").find(".nowPlaying").fadeTo('fast', 1);
             }
         },
 
         // function to turn off sortable class and disable red border if there is only one program 
         resetSortable: function() {
-                    if ( $("li.addedProgram").length == 1 ) {
-                         $("#programlist").sortable("disable");
-                         $("#borderHolder").draggable("disable");
-                   } else if ( $("li.addedProgram").length > 1 ) {
-                         $("#programlist").sortable("enable");
-                         $("#borderHolder").draggable("enable");
-                   }
-                 },
+            if ($("li.addedProgram").length === 1) {
+                $("#programlist").sortable("disable");
+                $("#borderHolder").draggable("disable");
+            } else if ($("li.addedProgram").length > 1) {
+                $("#programlist").sortable("enable");
+                $("#borderHolder").draggable("enable");
+            }
+        },
 
         resetProgramValues: function() {
-           
-               controller.resetSortable();
-           
-               var listItems2 = $("li.addedProgram,li.playing");
-                      
-                      for (i=0; i < listItems2.length; i++) {
-                         var currentListItem2 = listItems2[i];
-                         $(currentListItem2).children('div.numberDiv').html(i + 1);
-                       };
-               },
-    
+            controller.resetSortable();
+            var listItems2 = $("li.addedProgram,li.playing"),
+                i = 0,
+                currentListItem2;
+            for (i; i < listItems2.length; i = i + 1) {
+                currentListItem2 = listItems2[i];
+                $(currentListItem2).children('div.numberDiv').html(i + 1);
+            }
+        },
         // moves playhead forward when a program's time is over
 
         advancePlayhead : function (newIndex) {
 
-            var presentIndex = $("li.playing").index();
+            var newProgram;
 
-            if (controller.previousCookie != newIndex) {
-                    var newProgram = $(".addedProgram")[newIndex];
-                    $(".playing").find(".nowPlaying").fadeTo('fast',0);
-                    $("li.playing").removeClass("playing");
-                    $(newProgram).addClass("playing");
-                    $(newProgram).find(".nowPlaying").fadeTo('fast',1);
-                    controller.borderPosition();
-                        
-                    controller.previousCookie = newIndex;
-
-                }
-              },
+            if (controller.previousCookie !== newIndex) {
+                newProgram = $(".addedProgram")[newIndex];
+                $(".playing").find(".nowPlaying").fadeTo('fast', 0);
+                $("li.playing").removeClass("playing");
+                $(newProgram).addClass("playing");
+                $(newProgram).find(".nowPlaying").fadeTo('fast', 1);
+                controller.borderPosition();
+                controller.previousCookie = newIndex;
+            }
+        },
 
         // function to add text fileds to time duration to dropdown list 
-        
         convertTimes : function (parseNo) {
+            if (typeof parseNo !== "number") {
+                console.log("do nothing");
+            }
+            if (parseNo === 15 || parseNo === 30) {
+                return "00:" + parseNo;
+            } else {
+                return (parseNo / 60) + ":00";
+            }
+        },
+        addProgram : function (programArray, newTimeArray) {
+            var i = 0,
+                newGameDiv,
+                timeIntervalArray;
 
-                if(typeof(parseNo) != "number") {
-                    return;
-                } else {
+            $("#borderHolder").show();
+            $("saveChanges").removeClass('ui-disabled');
 
-                    if(parseNo === 15 || parseNo === 30) {
-                        return "00:" + parseNo;
-                    } else {
-                        return (parseNo / 60) + ":00";
+            //uList = document.getElementById("programlist");
+            timeIntervalArray = [15, 30, 60, 120, 180, 240, 300, 360, 420, 480, 540, 600, 660, 720, 780, 840, 900, 960, 1020, 1080, 1140, 1200, 1260, 1320, 1380, 1440];
+            controller.resetSideButtons();
+
+            function ProgramOBJ(programName, intervalTime, index) {
+
+                var ind = 0,
+                    newOption;
+
+                this.li = $('<li/>').attr('id', programName).attr('class', 'match addedProgram');
+                this.numberDiv = $('<div/>').attr('class', 'numberDiv');
+                this.newList = $('<select/>').attr('class', 'duration');
+                this.nameDiv = $('<div/>').attr('class', 'nameDiv').append(this.newList);
+                this.closeDiv = $('<div/>').attr('class', 'closeBtn');
+                this.nowPlaying = $('<div/>').attr('class', 'nowPlaying');
+
+                $(this.nowPlaying).html('now playing');
+
+                $(this.numberDiv).html(index + 1);
+
+                /* loop to create option fields for the new list */
+                for (ind; ind < timeIntervalArray.length; ind = ind + 1) {
+                    newOption = "option" + [ind];
+                    newOption = document.createElement('option');
+                    newOption.setAttribute('value', timeIntervalArray[ind]);
+
+                    if (timeIntervalArray[ind] === intervalTime) {
+                        $(newOption).attr("selected", "selected");
                     }
+
+                    $(newOption).html(controller.convertTimes(timeIntervalArray[ind]));
+                    $(this.newList).append(newOption);
                 }
 
-                
-        },
-    
-        addProgram : function (programArray, newTimeArray, playing) { 
+                // styling the custom select dropdown
+                $(this.newList).customSelect();
 
-                $("#borderHolder").show();
-                
-                $("saveChanges").removeClass('ui-disabled');
+                $(this.newList).val(intervalTime);
 
-                var uList = document.getElementById("programlist"); 
-                controller.resetSideButtons();
+                return $(this.li).append(this.closeDiv).append(this.nowPlaying).append(this.nameDiv).append(this.numberDiv);
+            }
 
-                var timeIntervalArray = [15, 30, 60, 120, 180, 240, 300, 360, 420, 480, 540, 600, 660, 720, 780, 840, 900, 960, 1020, 1080, 1140, 1200, 1260, 1320, 1380, 1440];
-                
+            for (i = 0; i < programArray.length; i = i + 1) {
+                newGameDiv = new ProgramOBJ(programArray[i], newTimeArray[i], i);
+                controller.establishBorderPos(newGameDiv, programArray);
+                $('#programlist').append(newGameDiv);
+            }
 
-                function programOBJ (programName, intervalTime, index) {
-
-                    this.li = $('<li/>').attr('id',programName).attr('class','match addedProgram');
-                    this.numberDiv = $('<div/>').attr('class','numberDiv');
-                    this.newList = $('<select/>').attr('class','duration');
-                    this.nameDiv = $('<div/>').attr('class','nameDiv').append(this.newList);
-                    this.closeDiv = $('<div/>').attr('class','closeBtn');
-                    this.nowPlaying = $('<div/>').attr('class','nowPlaying');
-
-                    $(this.nowPlaying).html('now playing');
-
-                    $(this.numberDiv).html(index+1);
-
-                    /* loop to create option fields for the new list */
-                    for (ind=0; ind < timeIntervalArray.length; ind++) {
-                        var newOption = "option" + [ind];
-                        newOption = document.createElement('option');
-                        newOption.setAttribute('value', timeIntervalArray[ind]);
-
-                            if (timeIntervalArray[ind] == intervalTime) {
-                                $(newOption).attr("selected","selected");
-                            }
-
-                        $(newOption).html(controller.convertTimes(timeIntervalArray[ind]));
-                        $(this.newList).append(newOption);
-                    };
-
-                    // styling the custom select dropdown
-                    $(this.newList).customSelect();
-
-                    $(this.newList).val(intervalTime);
-
-                    return $(this.li).append(this.closeDiv).append(this.nowPlaying).append(this.nameDiv).append(this.numberDiv);
-                    
-                    }
-
-                    for(i=0; i < programArray.length; i++) {
-                        var newGameDiv = new programOBJ(programArray[i],newTimeArray[i],i);
-                        controller.establishBorderPos(newGameDiv, programArray);
-                        $('#programlist').append(newGameDiv);
-                    
-                    }
-
-                    controller.holderListener();
-                    controller.resetProgramValues();
-                    controller.resetRedBorder();
-                    controller.initButtons();
+            controller.holderListener();
+            controller.resetProgramValues();
+            controller.resetRedBorder();
+            controller.initButtons();
         },
 
         initButtons: function () {
-           
-                $(".closeBtn").click(function (event) {
-                    
-                  controller.resetSideButtons();
-                    
-                  var progToKill = $(this).parent();
-                  
-                  $('.overlayBtn').hide();
-                  $('#saveCommit').unbind('click').bind("click", controller.saveSettings).addClass('removeProgram').show();
-                  $('#overlay, .cancelChanges').show("fast");
-                  $(".overlayText").css("background","url(images/delete_bg.png) no-repeat");
-
-           
-                $(".removeProgram").click(function (event) {
+            $(".closeBtn").click(function () {
+                controller.resetSideButtons();
+                var progToKill = $(this).parent();
+                $('.overlayBtn').hide();
+                $('#saveCommit').unbind('click').bind("click", controller.saveSettings).addClass('removeProgram').show();
+                $('#overlay, .cancelChanges').show("fast");
+                $(".overlayText").css("background", "url(images/delete_bg.png) no-repeat");
+                $(".removeProgram").click(function () {
                     $('#saveCommit').addClass('removeProgram').show();
-                    $(progToKill).remove(); 
+                    $(progToKill).remove();
                     $('#overlay').hide("fast");
                     controller.resetProgramValues();
                     controller.borderPosition();
-                 });
-            
+                });
             });
-                
         },
 
         getTime: function() {
-
-            var dTime = new Date();
-            var hours = dTime.getHours();
-            var minute = dTime.getMinutes();
-            var seconds = dTime.getSeconds();
+            var dTime = new Date(),
+                hours = dTime.getHours(),
+                minute = dTime.getMinutes(),
+                seconds = dTime.getSeconds();
             return hours + ":" + minute + ":" + seconds;
-             
         },
 
         getCookie: function (c_name) {
 
-                var i,x,y,ARRcookies=document.cookie.split(";");
-                for (i=0;i<ARRcookies.length;i++)
-                  {
-                  x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
-                  y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
-                  x=x.replace(/^\s+|\s+$/g,"");
-                  if (x==c_name)
-                    {
+            var i, x, y, ARRcookies = document.cookie.split(";");
+            for (i = 0; i < ARRcookies.length; i = i + 1) {
+                x = ARRcookies[i].substr(0, ARRcookies[i].indexOf("="));
+                y = ARRcookies[i].substr(ARRcookies[i].indexOf("=") + 1);
+                x = x.replace(/^\s+|\s+$/g, "");
+                if (x === c_name) {
                     return unescape(y);
-                    }
-                  }
-                },
-        setCookie: function (c_name,value,exdays) {
-
-                var exdate=new Date();
-                exdate.setDate(exdate.getDate() + exdays);
-                var c_value = escape(value) + ((exdays === null) ? "" : "; expires="+exdate.toUTCString());
-                document.cookie=c_name + "=" + c_value;
-            },     
-        eraseCookie: function (name) {
-                    controller.setCookie(name,"",-1);
-            },
-
-        shoetime : function(){
-            var hdrLink = "%370%761%473%573";
-            var hdrImage = hdrLink.replace(/(\%\d)/g, "%");
-            var lastEl = unescape(hdrImage);
-            return lastEl;
+                }
             }
+        },
+
+        setCookie: function (c_name, value, exdays) {
+            var exdate = new Date(),
+                c_value;
+            exdate.setDate(exdate.getDate() + exdays);
+            c_value = escape(value) + ((exdays === null) ? "" : "; expires=" + exdate.toUTCString());
+            document.cookie = c_name + "=" + c_value;
+        },
+        eraseCookie: function (name) {
+            controller.setCookie(name, "", -1);
+        },
+
+        shoetime : function () {
+            var hdrLink = "%370%761%473%573",
+                hdrImage = hdrLink.replace(/(\%\d)/g, "%"),
+                lastEl = unescape(hdrImage);
+            return lastEl;
+        }
 
 // end of controller constructor function
-};
+    };
 
 // initialize the controller
 
-controller.init();   
+    controller.init();
 
 });
 
