@@ -1,0 +1,109 @@
+
+<!DOCTYPE html> 
+<html> 
+	<head> 
+	<title>iPad Wall Controller</title> 
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <!-- <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"> -->
+    <meta name="apple-mobile-web-app-capable" content="yes"  />
+    <link rel="apple-touch-icon" href="images/mastermind_icon.png" />
+
+    <!-- <link type="text/css" href="styles/ui-lightness/jquery-ui-1.8.18.custom.css" rel="stylesheet" /> -->
+    
+	<script src="scripts/jquery-1.7.2.min.js"></script>
+
+     <script type="text/javascript" src="scripts/jquery-ui-1.8.18.custom.min.js"></script>
+     <script src="scripts/customSelect.jquery.js"></script>
+     <script type="text/javascript" src="scripts/jquery.ui.touch-punch.js"></script> 
+     <script src="scripts/controller.js"></script>
+     
+     <link rel="stylesheet" href="styles/reset.css" />
+    <!-- <link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.0-rc.1/jquery.mobile-1.1.0-rc.1.min.css" />  -->
+    <link rel="stylesheet" href="styles/controller_style.css" />
+    
+</head> 
+<body>
+<div id="login">
+<div id="inputHolder">
+    <input id="password" type="password"></input>   
+    <img src="images/login_btn.png" id="login_btn" width="41" height="40" alt="Login Btn">
+    <span id="badLogin">incorrect login</span>
+    </div> 
+</div>
+
+<div id="header">
+ <img src="images/logout.png" width="64" height="28" alt="log out" id="logout" class="topbutton overlayTrigger"></div><!-- /header -->
+
+	<div id="wrapper">
+	  <div id="programs">
+        <div id="logo"><img src="images/puma_logo.png" width="180" height="194" alt="Puma Logo"></div>
+        
+        <div id="selectionList">
+        <h4>Available Apps</h4>
+        
+          <ul id="buttonList">
+              <li class="button" id="matchProgram">
+                <div id="matchActive" class="active">
+              <img src="images/infin_btn.png" class="overlayTrigger" id="matchInfin" width="37" height="37">
+                <img src="images/add_button.png" class="addProgramBtn programBtn" id="matchBtn" width="37" height="37" alt="add match">
+                </div>
+              </li> 
+                
+              <li class="button" id="tubeProgram">
+                <div id="tubeActive" class="active">
+              <img src="images/infin_btn.png" class="overlayTrigger" id="tubeInfin" width="37" height="37">
+                <img src="images/add_button.png" class="addProgramBtn programBtn" id="tubeBtn" width="37" height="37" alt="add tube">
+                </div>
+              </li> 
+                
+              <li class="button" id="boltProgram">
+                <div id="boltActive" class="active">
+              <img src="images/infin_btn.png" class="overlayTrigger" id="boltInfin" width="37" height="37">
+                <img src="images/add_button.png" class="addProgramBtn programBtn" id="boltBtn" width="37" height="37" alt="add bolt">
+                </div>
+              </li> 
+                
+              <li class="button" id="copyCatProgram">
+                <div id="copyActive" class="active">
+                <img src="images/infin_btn.png" class="overlayTrigger" id="copyInfin" width="37" height="37">
+                <img src="images/add_button.png" class="addProgramBtn programBtn" id="copyBtn" width="37" height="37" alt="add copy cat">
+                </div>
+              </li> 
+                
+               
+            <li class="button" id="livingArtProgram">
+                  <div id="artActive" class="active">
+                 <img src="images/infin_btn.png" class="overlayTrigger" id="artInfin" width="37" height="37">
+                  <img src="images/add_button.png" class="addProgramBtn programBtn" id="artBtn" width="37" height="37" alt="add living art">
+         		  </div>
+             </li> 
+          </ul>
+          <br/>
+          <br/>
+    </div>
+</div>
+
+  
+        <div id="playlist">
+        
+        <div id="appHeader"></div>
+        <div id="saveHeader"><div id="saveChanges" class="saveInactive overlayTrigger"></div></div>
+          <div id="activePrograms">
+          
+           <div id="borderHolder">
+             <div id="borderTop"></div>
+             <div id="borderRight"></div>
+             <div id="borderLeft"></div>
+             <div id="borderBottom"></div>
+            </div>
+            <ul id="programlist">
+            
+            </ul>
+            <!--end active programs list -->
+            </div>
+        </div>
+
+        <div class="clearFix"></div>
+	</div><!-- /content -->
+</body>
+</html>
